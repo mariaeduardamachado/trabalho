@@ -3,7 +3,9 @@
 • Obs.: utilizar a instrução
 • Math.round(Math.random() * 1000000) para criar um número aleatório
 • Implementar os algoritmos de ordenação
+
 ########################################################################################
+
 Etapas: 
 • Método Bolha
 • Método Bolha 2ª versão
@@ -18,11 +20,13 @@ Ajuste Para Retornar
 • Tempo de execução
 
 #########################################################################################
+]
 Metodo Gerador
 
 • INT[ ]  GETVetor(INT I)
 
 ########################################################################################
+
 • Para testá-los utilize como parâmetro de o vetor criado de forma aleatória
 pela função getVetor
 • Identificar a complexidade dos algoritmos implementados (notação
