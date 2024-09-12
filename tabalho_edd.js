@@ -106,32 +106,70 @@ function measureTime(sortFunction, arr) {
 // Testar os algoritmos de ordenação com vetores de diferentes tamanhos
 function testSortingAlgorithms() {
   const sizes = [1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000];
-  
+
   sizes.forEach(size => {
       const { vetorA, vetorB, vetorC } = generateTestVectors(size);
 
       console.log(`\n----- Testando com ${size} elementos -----`);
 
-      // Bubble Sort
+      // Vetor Ordenado
+      console.log('\n### Vetor Ordenado ###');
+      
       console.log('Bubble Sort:');
-      let bubbleResult = measureTime(bubbleSort, vetorC);
-      console.log(`Tempo: ${bubbleResult.time} ms, Comparações: ${bubbleResult.comparacoes}, Trocas: ${bubbleResult.trocas}`);
-
-      // Bubble Sort Optimized
+      let bubbleResultA = measureTime(bubbleSort, vetorA);
+      console.log(`Tempo: ${bubbleResultA.time} ms, Comparações: ${bubbleResultA.comparacoes}, Trocas: ${bubbleResultA.trocas}`);
+      
       console.log('Bubble Sort 2ª versão (otimizada):');
-      let bubbleOptimizedResult = measureTime(bubbleSortOptimized, vetorC);
-      console.log(`Tempo: ${bubbleOptimizedResult.time} ms, Comparações: ${bubbleOptimizedResult.comparacoes}, Trocas: ${bubbleOptimizedResult.trocas}`);
+      let bubbleOptimizedResultA = measureTime(bubbleSortOptimized, vetorA);
+      console.log(`Tempo: ${bubbleOptimizedResultA.time} ms, Comparações: ${bubbleOptimizedResultA.comparacoes}, Trocas: ${bubbleOptimizedResultA.trocas}`);
+      
+      console.log('Insertion Sort:');
+      let insertionResultA = measureTime(insertionSort, vetorA);
+      console.log(`Tempo: ${insertionResultA.time} ms, Comparações: ${insertionResultA.comparacoes}, Trocas: ${insertionResultA.trocas}`);
+      
+      console.log('Selection Sort:');
+      let selectionResultA = measureTime(selectionSort, vetorA);
+      console.log(`Tempo: ${selectionResultA.time} ms, Comparações: ${selectionResultA.comparacoes}, Trocas: ${selectionResultA.trocas}`);
+      
+      // Vetor Decrescente
+      console.log('\n### Vetor Decrescente ###');
+      
+      console.log('Bubble Sort:');
+      let bubbleResultB = measureTime(bubbleSort, vetorB);
+      console.log(`Tempo: ${bubbleResultB.time} ms, Comparações: ${bubbleResultB.comparacoes}, Trocas: ${bubbleResultB.trocas}`);
+      
+      console.log('Bubble Sort 2ª versão (otimizada):');
+      let bubbleOptimizedResultB = measureTime(bubbleSortOptimized, vetorB);
+      console.log(`Tempo: ${bubbleOptimizedResultB.time} ms, Comparações: ${bubbleOptimizedResultB.comparacoes}, Trocas: ${bubbleOptimizedResultB.trocas}`);
+      
+      console.log('Insertion Sort:');
+      let insertionResultB = measureTime(insertionSort, vetorB);
+      console.log(`Tempo: ${insertionResultB.time} ms, Comparações: ${insertionResultB.comparacoes}, Trocas: ${insertionResultB.trocas}`);
+      
+      console.log('Selection Sort:');
+      let selectionResultB = measureTime(selectionSort, vetorB);
+      console.log(`Tempo: ${selectionResultB.time} ms, Comparações: ${selectionResultB.comparacoes}, Trocas: ${selectionResultB.trocas}`);
 
-      // Insertion Sort
-      console.log('Ordenação por Inserção:');
-      let insertionResult = measureTime(insertionSort, vetorC);
-      console.log(`Tempo: ${insertionResult.time} ms, Comparações: ${insertionResult.comparacoes}, Trocas: ${insertionResult.trocas}`);
-
-      // Selection Sort
-      console.log('Ordenação por Seleção:');
-      let selectionResult = measureTime(selectionSort, vetorC);
-      console.log(`Tempo: ${selectionResult.time} ms, Comparações: ${selectionResult.comparacoes}, Trocas: ${selectionResult.trocas}`);
+      // Vetor Aleatório
+      console.log('\n### Vetor Aleatório ###');
+      
+      console.log('Bubble Sort:');
+      let bubbleResultC = measureTime(bubbleSort, vetorC);
+      console.log(`Tempo: ${bubbleResultC.time} ms, Comparações: ${bubbleResultC.comparacoes}, Trocas: ${bubbleResultC.trocas}`);
+      
+      console.log('Bubble Sort 2ª versão (otimizada):');
+      let bubbleOptimizedResultC = measureTime(bubbleSortOptimized, vetorC);
+      console.log(`Tempo: ${bubbleOptimizedResultC.time} ms, Comparações: ${bubbleOptimizedResultC.comparacoes}, Trocas: ${bubbleOptimizedResultC.trocas}`);
+      
+      console.log('Insertion Sort:');
+      let insertionResultC = measureTime(insertionSort, vetorC);
+      console.log(`Tempo: ${insertionResultC.time} ms, Comparações: ${insertionResultC.comparacoes}, Trocas: ${insertionResultC.trocas}`);
+      
+      console.log('Selection Sort:');
+      let selectionResultC = measureTime(selectionSort, vetorC);
+      console.log(`Tempo: ${selectionResultC.time} ms, Comparações: ${selectionResultC.comparacoes}, Trocas: ${selectionResultC.trocas}`);
   });
 }
+
 // Executar os testes
 testSortingAlgorithms();

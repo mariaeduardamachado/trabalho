@@ -6,15 +6,108 @@
   <title>Gráfico de Comparação</title>
   <!-- Importar Chart.js através de CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .chart-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+    canvas {
+      width: 45%;
+      height: 300px;
+    }
+  </style>
 </head>
 <body>
 
-  <canvas id="comparisonChart"></canvas>
+  <div class="chart-container">
+    <div>
+      <h2>Gráfico para Vetor Aleatório</h2>
+      <canvas id="randomChart"></canvas>
+    </div>
+
+    <div>
+      <h2>Gráfico para Vetor Ordenado</h2>
+      <canvas id="sortedChart"></canvas>
+    </div>
+
+    <div>
+      <h2>Gráfico para Vetor Decrescente</h2>
+      <canvas id="reverseChart"></canvas>
+    </div>
+
+    <div>
+      <h2>Gráfico Comparando Todos</h2>
+      <canvas id="combinedChart"></canvas>
+    </div>
+  </div>
 
   <script>
+    // Função para gerar vetor de n números aleatórios
+    function getVetorAleatorio(n) {
+      let vetor = [];
+      for (let i = 0; i < n; i++) {
+        vetor.push(Math.round(Math.random() * 1000000));
+      }
+      return vetor;
+    }
+
+    // Função para gerar vetor ordenado de n números
+    function getVetorOrdenado(n) {
+      let vetor = [];
+      for (let i = 0; i < n; i++) {
+        vetor.push(i);
+      }
+      return vetor;
+    }
+
+    // Função para gerar vetor decrescente de n números
+    function getVetorDecrescente(n) {
+      let vetor = [];
+      for (let i = n; i > 0; i--) {
+        vetor.push(i);
+      }
+      return vetor;
+    }
+
+    // Algoritmos de ordenação
+    function bubbleSort(arr) {
+      let n = arr.length;
+      for (let i = 0; i < n - 1; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
+          if (arr[j] > arr[j + 1]) {
+            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          }
+        }
+      }
+      return arr;
+    }
+
+    function bubbleSortOptimized(arr) {
+      let swapped;
+      do {
+        swapped = false;
+        for (let i = 0; i < arr.length - 1; i++) {
+          if (arr[i] > arr[i + 1]) {
+            [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+            swapped = true;
+          }
+        }
+      } while (swapped);
+      return arr;
+    }
+
+    // Função para medir tempo de execução
+    function measureTime(sortFunction, arr) {
+      let startTime = performance.now();
+      sortFunction(arr.slice());
+      let endTime = performance.now();
+      return endTime - startTime;
+    }
+
     // Função para gerar o gráfico
-    function plotGraph(labels, data) {
-      const ctx = document.getElementById('comparisonChart').getContext('2d');
+    function plotGraph(chartId, labels, data) {
+      const ctx = document.getElementById(chartId).getContext('2d');
       new Chart(ctx, {
         type: 'line',
         data: {
@@ -34,39 +127,51 @@
       });
     }
 
-    // Simulação de dados para os algoritmos (substitua pelos resultados reais)
-    const labels = [1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000]; // Tamanhos dos vetores
-    const data = [
-      {
-        label: 'Bubble Sort',
-        data: [33.688251, 100.924002, 212.396173, 621.711135, 1402.940674, 2286.816529, 3183.794426, 4471.655792, 6354.230173, 7737.36383, 9501.987695], // Exemplo de tempos de execução do Bubble Sort
-        borderColor: 'rgba(255, 99, 132, 1)',
-        fill: false
-      },
+    // Função para realizar os testes e gerar os dados do gráfico
+    function testSortingAlgorithms() {
+      const sizes = [1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000]; // Tamanhos dos vetores para teste
 
-      {
-        label: 'Bubble Sort Optimized',
-        data: [26.05588, 165.065848, 337.882002, 983.35187, 1820.3973740000001, 3004.556807, 4285.758836, 6146.965569, 7987.859283, 9921.664727, 12699.304642], // Exemplo de tempos de execução do Bubble Sort
-        borderColor: 'rgba(255, 205, 86, 1)',
-        fill: false
-      },
+      const bubbleSortTimesRandom = [];
+      const bubbleSortTimesSorted = [];
+      const bubbleSortTimesReverse = [];
+      const bubbleSortOptimizedTimes = [];
 
-      {
-        label: 'Insertion Sort',
-        data: [7.603593, 27.515543, 86.332233, 186.22798, 315.170768, 503.483865, 705.469134, 962.935698, 1262.099393, 1545.2057089999998, 1942.387119], // Exemplo de tempos de execução do Insertion Sort
-        borderColor: 'rgba(153, 102, 255, 1)',
-        fill: false
-      },
+      sizes.forEach(size => {
+        const vetorAleatorio = getVetorAleatorio(size);
+        const vetorOrdenado = getVetorOrdenado(size);
+        const vetorDecrescente = getVetorDecrescente(size);
 
-      {
-        label: 'Selection Sort',
-        data: [13.11759, 51.399357, 115.957185, 240.172269, 455.046805, 625.36771, 880.159828, 1281.7681029999999, 1582.909185, 2036.811297, 2563.3001130000002], // Exemplo de tempos de execução do Bubble Sort
-        borderColor: 'rgba(255, 99, 132, 1)',
-        fill: false
-      }
-    ];
+        // Medir tempo de execução para vetor aleatório
+        bubbleSortTimesRandom.push(measureTime(bubbleSort, vetorAleatorio));
+        bubbleSortOptimizedTimes.push(measureTime(bubbleSortOptimized, vetorAleatorio));
 
-    plotGraph(labels, data);
+        // Medir tempo de execução para vetor ordenado
+        bubbleSortTimesSorted.push(measureTime(bubbleSort, vetorOrdenado));
+        bubbleSortOptimizedTimes.push(measureTime(bubbleSortOptimized, vetorOrdenado));
+
+        // Medir tempo de execução para vetor decrescente
+        bubbleSortTimesReverse.push(measureTime(bubbleSort, vetorDecrescente));
+        bubbleSortOptimizedTimes.push(measureTime(bubbleSortOptimized, vetorDecrescente));
+      });
+
+      // Plotar gráficos para cada cenário
+      const datasets = [
+        { label: 'Bubble Sort - Aleatório', data: bubbleSortTimesRandom, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+        { label: 'Bubble Sort - Ordenado', data: bubbleSortTimesSorted, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+        { label: 'Bubble Sort - Decrescente', data: bubbleSortTimesReverse, borderColor: 'rgba(255, 205, 86, 1)', fill: false },
+        { label: 'Bubble Sort Optimizado', data: bubbleSortOptimizedTimes, borderColor: 'rgba(75, 192, 192, 1)', fill: false }
+      ];
+
+      plotGraph('randomChart', sizes, datasets);
+      plotGraph('sortedChart', sizes, datasets);
+      plotGraph('reverseChart', sizes, datasets);
+
+      // Plotar gráfico combinado
+      plotGraph('combinedChart', sizes, datasets);
+    }
+
+    // Executar os testes ao carregar a página
+    window.onload = testSortingAlgorithms;
   </script>
 
 </body>
