@@ -40,3 +40,37 @@ Elaborar conclusão de acordo com as seguintes questões:
 • O tipo de vetor (ordenado de forma crescente, decrescente e aleatório) influi
 na performance dos algoritmos?
 • Os gráficos obtidos expressaram a notação Big O definida? Por que?+
+
+######################################################################################
+
+Explicação do codgo
+
+Função getVetor(n):
+
+Gera um vetor de tamanho n preenchido com números aleatórios, conforme solicitado.
+Algoritmos de Ordenação:
+
+Cada algoritmo retorna o vetor ordenado, além de contar o número de comparações e trocas realizadas.
+Implementamos:
+bubbleSort: Método Bolha.
+bubbleSortOptimized: Método Bolha 2ª versão, que para de rodar se não houver trocas.
+insertionSort: Ordenação por Inserção.
+selectionSort: Ordenação por Seleção.
+Função generateTestVectors(n):
+
+Gera três vetores:
+vetorA: Ordenado de forma crescente.
+vetorB: Ordenado de forma decrescente.
+vetorC: Preenchido com números aleatórios.
+Função measureTime(sortFunction, arr):
+
+Mede o tempo de execução do algoritmo de ordenação utilizando performance.now().
+Função testSortingAlgorithms():
+
+Realiza os testes para diferentes tamanhos de vetor (1000, 5000, 10000, etc.) e imprime os resultados de tempo, comparações e trocas para cada algoritmo.
+Complexidade dos Algoritmos:
+Bubble Sort: O(n²), pois precisa fazer várias comparações e trocas para ordenar.
+Bubble Sort 2ª versão: O(n²) no pior caso, mas pode ser mais eficiente em vetores parcialmente ordenados (O(n) no melhor caso).
+Insertion Sort: O(n²) no pior caso, mas pode ser O(n) no melhor caso (para vetores ordenados).
+Selection Sort: O(n²) para todos os casos, pois sempre realiza comparações e trocas, mesmo que o vetor já esteja ordenado.
+
