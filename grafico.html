@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gráfico de Comparação</title>
+  <!-- Importar Chart.js através de CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <canvas id="comparisonChart"></canvas>
+
+  <script>
+    // Função para gerar o gráfico
+    function plotGraph(labels, data) {
+      const ctx = document.getElementById('comparisonChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: data
+        },
+        options: {
+          scales: {
+            x: {
+              title: { display: true, text: 'n (tamanho do vetor)' }
+            },
+            y: {
+              title: { display: true, text: 'Tempo (ms)' }
+            }
+          }
+        }
+      });
+    }
+
+    // Simulação de dados para os algoritmos (substitua pelos resultados reais)
+    const labels = [1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000]; // Tamanhos dos vetores
+    const data = [
+      {
+        label: 'Bubble Sort',
+        data: [33.688251, 100.924002, 212.396173, 621.711135, 1402.940674, 2286.816529, 3183.794426, 4471.655792, 6354.230173, 7737.36383, 9501.987695], // Exemplo de tempos de execução do Bubble Sort
+        borderColor: 'rgba(255, 99, 132, 1)',
+        fill: false
+      },
+
+      {
+        label: 'Bubble Sort Optimized',
+        data: [26.05588, 165.065848, 337.882002, 983.35187, 1820.3973740000001, 3004.556807, 4285.758836, 6146.965569, 7987.859283, 9921.664727, 12699.304642], // Exemplo de tempos de execução do Bubble Sort
+        borderColor: 'rgba(255, 205, 86, 1)',
+        fill: false
+      },
+
+      {
+        label: 'Insertion Sort',
+        data: [7.603593, 27.515543, 86.332233, 186.22798, 315.170768, 503.483865, 705.469134, 962.935698, 1262.099393, 1545.2057089999998, 1942.387119], // Exemplo de tempos de execução do Insertion Sort
+        borderColor: 'rgba(153, 102, 255, 1)',
+        fill: false
+      },
+
+      {
+        label: 'Selection Sort',
+        data: [13.11759, 51.399357, 115.957185, 240.172269, 455.046805, 625.36771, 880.159828, 1281.7681029999999, 1582.909185, 2036.811297, 2563.3001130000002], // Exemplo de tempos de execução do Bubble Sort
+        borderColor: 'rgba(255, 99, 132, 1)',
+        fill: false
+      }
+    ];
+
+    plotGraph(labels, data);
+  </script>
+
+</body>
+</html>
