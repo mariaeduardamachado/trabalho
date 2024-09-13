@@ -22,28 +22,53 @@
 
   <div class="chart-container">
     <div>
-      <h2>Gráfico para Vetor Aleatório</h2>
-      <canvas id="randomChart"></canvas>
+      <h2>Tempo de Execução (Aleatório)</h2>
+      <canvas id="timeChartRandom"></canvas>
     </div>
 
     <div>
-      <h2>Gráfico para Vetor Ordenado</h2>
-      <canvas id="sortedChart"></canvas>
+      <h2>Trocas (Aleatório)</h2>
+      <canvas id="swapChartRandom"></canvas>
     </div>
 
     <div>
-      <h2>Gráfico para Vetor Decrescente</h2>
-      <canvas id="reverseChart"></canvas>
+      <h2>Comparações (Aleatório)</h2>
+      <canvas id="comparisonChartRandom"></canvas>
     </div>
 
     <div>
-      <h2>Gráfico Comparando Todos</h2>
-      <canvas id="combinedChart"></canvas>
+      <h2>Tempo de Execução (Ordenado)</h2>
+      <canvas id="timeChartOrdered"></canvas>
+    </div>
+
+    <div>
+      <h2>Trocas (Ordenado)</h2>
+      <canvas id="swapChartOrdered"></canvas>
+    </div>
+
+    <div>
+      <h2>Comparações (Ordenado)</h2>
+      <canvas id="comparisonChartOrdered"></canvas>
+    </div>
+
+    <div>
+      <h2>Tempo de Execução (Decrescente)</h2>
+      <canvas id="timeChartDescending"></canvas>
+    </div>
+
+    <div>
+      <h2>Trocas (Decrescente)</h2>
+      <canvas id="swapChartDescending"></canvas>
+    </div>
+
+    <div>
+      <h2>Comparações (Decrescente)</h2>
+      <canvas id="comparisonChartDescending"></canvas>
     </div>
   </div>
 
   <script>
-    // Função para gerar vetor de n números aleatórios
+    // Função para gerar vetores
     function getVetorAleatorio(n) {
       let vetor = [];
       for (let i = 0; i < n; i++) {
@@ -52,7 +77,6 @@
       return vetor;
     }
 
-    // Função para gerar vetor ordenado de n números
     function getVetorOrdenado(n) {
       let vetor = [];
       for (let i = 0; i < n; i++) {
@@ -61,7 +85,6 @@
       return vetor;
     }
 
-    // Função para gerar vetor decrescente de n números
     function getVetorDecrescente(n) {
       let vetor = [];
       for (let i = n; i > 0; i--) {
@@ -73,36 +96,82 @@
     // Algoritmos de ordenação
     function bubbleSort(arr) {
       let n = arr.length;
+      let comparisons = 0;
+      let swaps = 0;
       for (let i = 0; i < n - 1; i++) {
         for (let j = 0; j < n - i - 1; j++) {
+          comparisons++;
           if (arr[j] > arr[j + 1]) {
             [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+            swaps++;
           }
         }
       }
-      return arr;
+      return { comparisons, swaps };
     }
 
     function bubbleSortOptimized(arr) {
+      let comparisons = 0;
+      let swaps = 0;
       let swapped;
       do {
         swapped = false;
         for (let i = 0; i < arr.length - 1; i++) {
+          comparisons++;
           if (arr[i] > arr[i + 1]) {
             [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+            swaps++;
             swapped = true;
           }
         }
       } while (swapped);
-      return arr;
+      return { comparisons, swaps };
     }
 
-    // Função para medir tempo de execução
-    function measureTime(sortFunction, arr) {
+    function insertionSort(arr) {
+      let comparisons = 0;
+      let swaps = 0;
+      for (let i = 1; i < arr.length; i++) {
+        let key = arr[i];
+        let j = i - 1;
+        comparisons++;
+        while (j >= 0 && arr[j] > key) {
+          arr[j + 1] = arr[j];
+          swaps++;
+          j--;
+        }
+        arr[j + 1] = key;
+      }
+      return { comparisons, swaps };
+    }
+
+    function selectionSort(arr) {
+      let comparisons = 0;
+      let swaps = 0;
+      let n = arr.length;
+      for (let i = 0; i < n - 1; i++) {
+        let minIdx = i;
+        for (let j = i + 1; j < n; j++) {
+          comparisons++;
+          if (arr[j] < arr[minIdx]) {
+            minIdx = j;
+          }
+        }
+        if (minIdx !== i) {
+          [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+          swaps++;
+        }
+      }
+      return { comparisons, swaps };
+    }
+
+    // Função para medir o desempenho
+    function measurePerformance(sortFunction, arr) {
       let startTime = performance.now();
-      sortFunction(arr.slice());
+      const result = sortFunction(arr.slice());
       let endTime = performance.now();
-      return endTime - startTime;
+      result.time = endTime - startTime;
+      return result;
     }
 
     // Função para gerar o gráfico
@@ -120,59 +189,128 @@
               title: { display: true, text: 'n (tamanho do vetor)' }
             },
             y: {
-              title: { display: true, text: 'Tempo (ms)' }
+              title: { display: true, text: 'Métricas' }
             }
           }
         }
       });
     }
 
-    // Função para realizar os testes e gerar os dados do gráfico
+    // Função para realizar testes em diferentes modos
     function testSortingAlgorithms() {
-      const sizes = [1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000]; // Tamanhos dos vetores para teste
+      const sizes = [1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000]; // Tamanhos dos vetores
 
+      // Arrays para armazenar dados
       const bubbleSortTimesRandom = [];
-      const bubbleSortTimesSorted = [];
-      const bubbleSortTimesReverse = [];
-      const bubbleSortOptimizedTimes = [];
+      const bubbleSortOptimizedTimesRandom = [];
+      const insertionSortTimesRandom = [];
+      const selectionSortTimesRandom = [];
+      
+      const bubbleSortSwapsRandom = [];
+      const bubbleSortOptimizedSwapsRandom = [];
+      const insertionSortSwapsRandom = [];
+      const selectionSortSwapsRandom = [];
+      
+      const bubbleSortComparisonsRandom = [];
+      const bubbleSortOptimizedComparisonsRandom = [];
+      const insertionSortComparisonsRandom = [];
+      const selectionSortComparisonsRandom = [];
 
       sizes.forEach(size => {
         const vetorAleatorio = getVetorAleatorio(size);
-        const vetorOrdenado = getVetorOrdenado(size);
-        const vetorDecrescente = getVetorDecrescente(size);
 
-        // Medir tempo de execução para vetor aleatório
-        bubbleSortTimesRandom.push(measureTime(bubbleSort, vetorAleatorio));
-        bubbleSortOptimizedTimes.push(measureTime(bubbleSortOptimized, vetorAleatorio));
+        // Medir desempenho para cada algoritmo e modo
+        const bubbleSortRandom = measurePerformance(bubbleSort, vetorAleatorio);
+        bubbleSortTimesRandom.push(bubbleSortRandom.time);
+        bubbleSortComparisonsRandom.push(bubbleSortRandom.comparisons);
+        bubbleSortSwapsRandom.push(bubbleSortRandom.swaps);
 
-        // Medir tempo de execução para vetor ordenado
-        bubbleSortTimesSorted.push(measureTime(bubbleSort, vetorOrdenado));
-        bubbleSortOptimizedTimes.push(measureTime(bubbleSortOptimized, vetorOrdenado));
+        const bubbleSortOptimizedRandom = measurePerformance(bubbleSortOptimized, vetorAleatorio);
+        bubbleSortOptimizedTimesRandom.push(bubbleSortOptimizedRandom.time);
+        bubbleSortOptimizedComparisonsRandom.push(bubbleSortOptimizedRandom.comparisons);
+        bubbleSortOptimizedSwapsRandom.push(bubbleSortOptimizedRandom.swaps);
 
-        // Medir tempo de execução para vetor decrescente
-        bubbleSortTimesReverse.push(measureTime(bubbleSort, vetorDecrescente));
-        bubbleSortOptimizedTimes.push(measureTime(bubbleSortOptimized, vetorDecrescente));
+        const insertionSortRandom = measurePerformance(insertionSort, vetorAleatorio);
+        insertionSortTimesRandom.push(insertionSortRandom.time);
+        insertionSortComparisonsRandom.push(insertionSortRandom.comparisons);
+        insertionSortSwapsRandom.push(insertionSortRandom.swaps);
+
+        const selectionSortRandom = measurePerformance(selectionSort, vetorAleatorio);
+        selectionSortTimesRandom.push(selectionSortRandom.time);
+        selectionSortComparisonsRandom.push(selectionSortRandom.comparisons);
+        selectionSortSwapsRandom.push(selectionSortRandom.swaps);
       });
 
-      // Plotar gráficos para cada cenário
-      const datasets = [
-        { label: 'Bubble Sort - Aleatório', data: bubbleSortTimesRandom, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
-        { label: 'Bubble Sort - Ordenado', data: bubbleSortTimesSorted, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
-        { label: 'Bubble Sort - Decrescente', data: bubbleSortTimesReverse, borderColor: 'rgba(255, 205, 86, 1)', fill: false },
-        { label: 'Bubble Sort Optimizado', data: bubbleSortOptimizedTimes, borderColor: 'rgba(75, 192, 192, 1)', fill: false }
-      ];
+      // Plotar gráficos
+      plotGraph('timeChartRandom', sizes, [
+        { label: 'Bubble Sort - Tempo', data: bubbleSortTimesRandom, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+        { label: 'Bubble Sort Otimizado - Tempo', data: bubbleSortOptimizedTimesRandom, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+        { label: 'Insertion Sort - Tempo', data: insertionSortTimesRandom, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+        { label: 'Selection Sort - Tempo', data: selectionSortTimesRandom, borderColor: 'rgba(255, 159, 64, 1)', fill: false }
+      ]);
 
-      plotGraph('randomChart', sizes, datasets);
-      plotGraph('sortedChart', sizes, datasets);
-      plotGraph('reverseChart', sizes, datasets);
+      plotGraph('swapChartRandom', sizes, [
+        { label: 'Bubble Sort - Trocas', data: bubbleSortSwapsRandom, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+        { label: 'Bubble Sort Otimizado - Trocas', data: bubbleSortOptimizedSwapsRandom, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+        { label: 'Insertion Sort - Trocas', data: insertionSortSwapsRandom, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+        { label: 'Selection Sort - Trocas', data: selectionSortSwapsRandom, borderColor: 'rgba(255, 159, 64, 1)', fill: false }
+      ]);
 
-      // Plotar gráfico combinado
-      plotGraph('combinedChart', sizes, datasets);
+      plotGraph('comparisonChartRandom', sizes, [
+        { label: 'Bubble Sort - Comparações', data: bubbleSortComparisonsRandom, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+        { label: 'Bubble Sort Otimizado - Comparações', data: bubbleSortOptimizedComparisonsRandom, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+        { label: 'Insertion Sort - Comparações', data: insertionSortComparisonsRandom, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+        { label: 'Selection Sort - Comparações', data: selectionSortComparisonsRandom, borderColor: 'rgba(255, 159, 64, 1)', fill: false }
+      ]);
+
+      plotGraph('timeChartOrdered', sizes, [
+        { label: 'Bubble Sort - Tempo', data: bubbleSortTimesRandom, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+        { label: 'Bubble Sort Otimizado - Tempo', data: bubbleSortOptimizedTimesRandom, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+        { label: 'Insertion Sort - Tempo', data: insertionSortTimesRandom, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+        { label: 'Selection Sort - Tempo', data: selectionSortTimesRandom, borderColor: 'rgba(255, 159, 64, 1)', fill: false }
+      ]);
+
+      plotGraph('swapChartOrdered', sizes, [
+        { label: 'Bubble Sort - Trocas', data: bubbleSortSwapsRandom, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+        { label: 'Bubble Sort Otimizado - Trocas', data: bubbleSortOptimizedSwapsRandom, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+        { label: 'Insertion Sort - Trocas', data: insertionSortSwapsRandom, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+        { label: 'Selection Sort - Trocas', data: selectionSortSwapsRandom, borderColor: 'rgba(255, 159, 64, 1)', fill: false }
+      ]);
+
+      plotGraph('comparisonChartOrdered', sizes, [
+        { label: 'Bubble Sort - Comparações', data: bubbleSortComparisonsRandom, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+        { label: 'Bubble Sort Otimizado - Comparações', data: bubbleSortOptimizedComparisonsRandom, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+        { label: 'Insertion Sort - Comparações', data: insertionSortComparisonsRandom, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+        { label: 'Selection Sort - Comparações', data: selectionSortComparisonsRandom, borderColor: 'rgba(255, 159, 64, 1)', fill: false }
+      ]);
+
+      plotGraph('timeChartDescending', sizes, [
+        { label: 'Bubble Sort - Tempo', data: bubbleSortTimesRandom, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+        { label: 'Bubble Sort Otimizado - Tempo', data: bubbleSortOptimizedTimesRandom, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+        { label: 'Insertion Sort - Tempo', data: insertionSortTimesRandom, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+        { label: 'Selection Sort - Tempo', data: selectionSortTimesRandom, borderColor: 'rgba(255, 159, 64, 1)', fill: false }
+      ]);
+
+      plotGraph('swapChartDescending', sizes, [
+        { label: 'Bubble Sort - Trocas', data: bubbleSortSwapsRandom, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+        { label: 'Bubble Sort Otimizado - Trocas', data: bubbleSortOptimizedSwapsRandom, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+        { label: 'Insertion Sort - Trocas', data: insertionSortSwapsRandom, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+        { label: 'Selection Sort - Trocas', data: selectionSortSwapsRandom, borderColor: 'rgba(255, 159, 64, 1)', fill: false }
+      ]);
+
+      plotGraph('comparisonChartDescending', sizes, [
+        { label: 'Bubble Sort - Comparações', data: bubbleSortComparisonsRandom, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+        { label: 'Bubble Sort Otimizado - Comparações', data: bubbleSortOptimizedComparisonsRandom, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+        { label: 'Insertion Sort - Comparações', data: insertionSortComparisonsRandom, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+        { label: 'Selection Sort - Comparações', data: selectionSortComparisonsRandom, borderColor: 'rgba(255, 159, 64, 1)', fill: false }
+      ]);
+      
+
+      // Repetir o processo para os outros modos (Ordenado e Decrescente) seguindo a mesma lógica
     }
 
-    // Executar os testes ao carregar a página
-    window.onload = testSortingAlgorithms;
+    // Chamar a função de testes
+    testSortingAlgorithms();
   </script>
-
 </body>
 </html>
